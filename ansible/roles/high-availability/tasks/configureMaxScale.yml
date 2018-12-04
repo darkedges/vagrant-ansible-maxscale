@@ -1,0 +1,22 @@
+---
+
+- debug: msg="Configuring MaxScale Cluster"
+
+- name: Disable STONITH
+  command: pcs property set stonith-enabled=false
+
+- name: Create MaxScale Resource
+  command: pcs resource create maxscale systemd:maxscale op monitor interval=1s 
+
+- name: Clone MaxScale Resource
+  command: pcs resource clone maxscale
+
+- name: Create Cluster Virtual IP Adress
+  command: pcs resource create clusterip ocf:heartbeat:IPaddr2 ip=192.168.50.200 cidr_netmask=24 op monitor interval=20s 
+
+
+- name: Configure where failed resources stay
+  command: pcs resource meta clusterip migration-threshold=1 failure-timeout=60s resource-stickiness=100 sudo pcs resource meta maxscale-clone migration-threshold=1 failure-timeout=60s resource-stickiness=100
+
+- name: Configure a colocation constraint for the VIP
+  command: pcs constraint colocation add clusterip with maxscale-clone INFINITY  

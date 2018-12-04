@@ -1,0 +1,10 @@
+---
+
+hacluster_password_encrypted: $1$salty$SzJsU4qDcXp536Acnlp6I.
+hacluster_password: password
+hacluster_groupname: default
+hacluster_name: cluster
+
+maxscale_version: 2.1.0
+maxscale_user: maxscale
+maxscale_password: password

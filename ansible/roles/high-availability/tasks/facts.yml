@@ -1,0 +1,17 @@
+---
+
+- shell: uname -m
+  register: uname_result
+
+- name: Test if cluster is already configured
+  command: pcs status
+  register: pcs_status
+  changed_when: false
+  failed_when: false
+
+- name: set facts
+  set_fact:
+    cluster_master: "{{ inventory_hostname == groups[hacluster_groupname][0] }}"
+    pcs_notconfigured: "{{ pcs_status | failed and 'Error: cluster is not currently running on this node' in pcs_status.stderr }}"
+    os_architecture: "{{ uname_result.stdout }}"
+    hacluster_hosts: "{{ groups[hacluster_groupname] | join(' ')}}"

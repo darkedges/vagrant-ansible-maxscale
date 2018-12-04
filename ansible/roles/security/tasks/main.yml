@@ -1,0 +1,20 @@
+---
+- name: Start and enable firewalld
+  service: name=firewalld state=started enabled=yes
+
+- name: Open firewall for external access to 'high-availability'
+  firewalld: service="{{ item }}"
+             permanent=true 
+             immediate=true 
+             state=enabled
+  with_items:
+    - high-availability 
+    - mysql
+
+- name: Open MaxScale ports on firewall
+  firewalld: port={{ item }} 
+             permanent=true 
+             immediate=true 
+             state=enabled
+  with_items:
+    - 4006/tcp

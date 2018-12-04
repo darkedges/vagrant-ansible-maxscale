@@ -1,0 +1,6 @@
+# MaxScale repository list
+[galera]
+name = MaxScale
+baseurl =http://downloads.mariadb.com/MaxScale/{{ maxscale_version }}/{{ ansible_os_family | lower }}/{{ ansible_distribution_version  }}/{{ os_architecture }}
+gpgkey = http://downloads.mariadb.com/MaxScale/MariaDB-MaxScale-GPG-KEY
+gpgcheck = 1

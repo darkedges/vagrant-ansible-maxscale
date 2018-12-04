@@ -1,0 +1,9 @@
+---
+
+- hosts: maxscale
+  gather_facts: yes
+  become: yes
+  roles:
+    - { role: darkedges.commonos, tags: [ 'setup' ] }
+    - { role: security, tags: [ 'setup' ] }
+    - { role: high-availability, tags: [ 'setup', 'packages' ] }

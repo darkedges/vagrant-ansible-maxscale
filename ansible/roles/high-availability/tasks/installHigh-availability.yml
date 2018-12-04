@@ -1,0 +1,43 @@
+---
+
+- debug: msg="Installing 'high-availability' repo"
+
+- fail:
+    msg: This role requires that 'hacluster_groupname' is a valid groupname
+  when: ( hacluster_groupname not in group_names ) 
+
+# - shell: uname -m
+#   register: uname_result
+
+# - name: Add 'high-availability' repo
+#   template: src="etc/yum.respos.d/high-availability.repo.j2"
+#             dest=/etc/yum.repos.d/high-availability.repo
+#             owner=root 
+#             group=root mode=0644
+
+- name: Add EPEL repo
+  yum: name=epel-release state=present
+
+- name: install required packages
+  package: name="{{ item }}"
+           state=present
+  with_items:
+    - pacemaker 
+    - pcs 
+    - psmisc 
+    - policycoreutils-python  
+
+- name: enable 'high-availability' services
+  service: name="pcsd.service"
+           state=started
+           enabled=yes
+
+- name: link 'pcsd.service'
+  file:
+    src: /usr/lib/systemd/system/pcsd.service
+    dest: /etc/systemd/system/multi-user.target.wants/pcsd.service
+    state: link
+
+- name: update 'hacluster' password
+  user: name=hacluster
+        password="{{ hacluster_password_encrypted }}"

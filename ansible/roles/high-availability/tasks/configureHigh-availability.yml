@@ -1,0 +1,15 @@
+---
+
+- debug: msg="Configuring 'high-availability' repo"
+
+- name: Authenticate to the cluster
+  command: pcs cluster auth -u hacluster -p {{ hacluster_password }} {{ hacluster_hosts }}
+  
+- name: setup cluster
+  command: pcs cluster setup --name {{ hacluster_name }} {{ hacluster_hosts }}
+  
+- name: Start the cluster
+  command: pcs cluster start --all
+
+- name: Enable the cluster on all nodes
+  command: pcs cluster enable --all

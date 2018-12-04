@@ -1,0 +1,15 @@
+---
+
+- include: installHigh-availability.yml
+
+- include: facts.yml
+
+- include: configureHigh-availability.yml
+  when: cluster_master and pcs_notconfigured
+
+- include: installMariaDB.yml
+
+- include: installMaxScale.yml
+
+- include: configureMaxScale.yml
+  when: cluster_master 

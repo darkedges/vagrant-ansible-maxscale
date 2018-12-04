@@ -1,0 +1,30 @@
+---
+
+- name: create MaxScale User
+  mysql_user:
+    name: '{{ maxscale_user }}'
+    password: '{{ maxscale_password }}'
+    priv: '*.*:ALL'
+    state: present
+    host: '{{ hostvars[item].ansible_fqdn }}'
+  with_items: '{{ groups[hacluster_groupname] }}'
+
+- name: install MaxScale Repository
+  yum_repository: 
+    name: maxscale
+    description: MaxScale YUM repo
+    baseurl: "http://downloads.mariadb.com/MaxScale/{{ maxscale_version }}/{{ ansible_distribution | lower }}/{{ ansible_distribution_major_version }}/{{ os_architecture }}"
+    gpgkey: http://downloads.mariadb.com/MaxScale/MariaDB-MaxScale-GPG-KEY
+    gpgcheck: yes
+    enabled: yes
+
+- name: install MaxScale package
+  package: name=maxscale
+           state=present
+
+- name: install MaxScale configuration
+  template: src=etc/maxscale.cnf.j2
+            dest=/etc/maxscale.cnf
+            mode=0644
+  notify: restart maxscale
+  
